@@ -24,7 +24,7 @@ services:
 
       - name: user-rate-limiting
         paths:
-          - /api/v1/user/me/password/
+          - /api/v1/users/me/password/
           - /api/v1/users/me/email/
           - /api/v1/users/me/username/
         strip_path: false
