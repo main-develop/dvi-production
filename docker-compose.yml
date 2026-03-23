@@ -26,9 +26,7 @@ services:
 
   user-api:
     restart: always
-    build:
-      context: ./user_api
-      dockerfile: Dockerfile
+    image: ghcr.io/main-develop/dvi-user-service:latest
     env_file:
       - .env
     depends_on:
@@ -44,14 +42,13 @@ services:
       user-api:
         condition: service_started
     environment:
-      KONG_DATABASE: "off" # db-less mode
+      KONG_DATABASE: "off"
       KONG_DECLARATIVE_CONFIG: /etc/kong/kong.yml
       KONG_PROXY_ACCESS_LOG: /dev/stdout
       KONG_ADMIN_ACCESS_LOG: /dev/stdout
-      KONG_ADMIN_LISTEN: 0.0.0.0:8001 # for management (safe for now)
+      KONG_ADMIN_LISTEN: "off"
     ports:
-      - "8000:8000" # public API traffic
-      - "8001:8001" # admin API (can be hidden in production)
+      - "8000:8000"
     volumes:
       - ./kong.yml:/etc/kong/kong.yml:ro
     healthcheck:
@@ -63,11 +60,7 @@ services:
 
   web:
     restart: always
-    build:
-      context: ./dvi-web-service
-      dockerfile: Dockerfile
-      args:
-        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+    image: ghcr.io/main-develop/dvi-web-service:latest
     ports:
       - "3000:3000"
     env_file:
