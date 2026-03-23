@@ -1,0 +1,6 @@
+[submodule "dvi-web-service"]
+	path = dvi-web-service
+	url = https://github.com/main-develop/dvi-web-service.git
+[submodule "dvi-user-service"]
+	path = dvi-user-service
+	url = https://github.com/main-develop/dvi-user-service.git

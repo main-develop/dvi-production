@@ -1,0 +1,82 @@
+_format_version: "3.0"
+services:
+  - name: user-api-gateway
+    url: http://user-api:8000
+    routes:
+      - name: auth-rate-limiting
+        paths:
+          - /api/v1/auth/login/
+          - /api/v1/auth/register/
+          - /api/v1/auth/verify/
+          - /api/v1/auth/resend-verification/
+        strip_path: false
+        preserve_host: true
+        protocols:
+          - http
+        plugins:
+          - name: rate-limiting
+            config:
+              minute: 10
+              hour: 40
+              policy: local
+              limit_by: ip
+              hide_client_headers: false
+
+      - name: user-rate-limiting
+        paths:
+          - /api/v1/user/me/password/
+          - /api/v1/users/me/email/
+          - /api/v1/users/me/username/
+        strip_path: false
+        preserve_host: true
+        protocols:
+          - http
+        plugins:
+          - name: rate-limiting
+            config:
+              minute: 5
+              hour: 30
+              policy: local
+              limit_by: ip
+              hide_client_headers: false
+
+      - name: api-v1-rate-limiting
+        paths:
+          - /api/v1
+        strip_path: false
+        preserve_host: true
+        protocols:
+          - http
+        plugins:
+          - name: rate-limiting
+            config:
+              minute: 50
+              policy: local
+              limit_by: ip
+              hide_client_headers: false
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - http://localhost:3000
+          methods:
+            - GET
+            - POST
+            - PUT
+            - PATCH
+            - DELETE
+            - HEAD
+            - OPTIONS
+          headers:
+            - Accept
+            - Authorization
+            - Content-Type
+            - X-CSRFToken
+            - X-Requested-With
+          exposed_headers:
+            - X-RateLimit-Limit
+            - X-RateLimit-Remaining
+            - X-RateLimit-Reset
+            - Retry-After
+          credentials: true
+          max_age: 3600
