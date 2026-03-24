@@ -27,6 +27,9 @@ services:
   user-api:
     restart: always
     image: ghcr.io/main-develop/dvi-user-service:latest
+    # build:
+    #   context: ./user_api
+    #   dockerfile: Dockerfile
     env_file:
       - .env
     depends_on:
@@ -61,6 +64,11 @@ services:
   web:
     restart: always
     image: ghcr.io/main-develop/dvi-web-service:latest
+    # build:
+    #   context: ./dvi-web-service
+    #   dockerfile: Dockerfile
+    #   args:
+    #     NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
     ports:
       - "3000:3000"
     env_file:
