@@ -2,16 +2,12 @@ services:
   redis:
     image: redis:7-alpine
     restart: always
-    ports:
-      - "6379:6379"
     volumes:
       - redis_data:/data
 
   db:
     image: postgres:latest
     restart: always
-    ports:
-      - "5432:5432"
     env_file:
       - .env
     volumes:
@@ -25,9 +21,7 @@ services:
       start_period: 10s
 
   user-api:
-    build:
-      context: ./dvi-user-service
-      dockerfile: Dockerfile
+    image: ghcr.io/main-develop/dvi-user-service:latest
     restart: always
     env_file:
       - .env
@@ -41,11 +35,13 @@ services:
     image: kong/kong-gateway:latest
     restart: always
     ports:
-      - "8000:8000"
+      - "80:8000"
+      - "443:8443"
     environment:
       KONG_DATABASE: "off"
       KONG_DECLARATIVE_CONFIG: /etc/kong/kong.yml
       KONG_ADMIN_LISTEN: "off"
+      KONG_PROXY_LISTEN: "0.0.0.0:8000, 0.0.0.0:8443 ssl"
       KONG_ADMIN_ACCESS_LOG: /dev/stdout
       KONG_PROXY_ACCESS_LOG: /dev/stdout
     depends_on:
@@ -53,6 +49,7 @@ services:
         condition: service_started
     volumes:
       - ./kong.yml:/etc/kong/kong.yml:ro
+      - /root/certs:/etc/kong/certs:ro
     healthcheck:
       test: ["CMD", "kong", "health"]
       interval: 10s
@@ -61,16 +58,8 @@ services:
       start_period: 10s
 
   web:
-    build:
-      context: ./dvi-web-service
-      dockerfile: Dockerfile
-      args:
-        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+    image: ghcr.io/main-develop/dvi-web-service:latest
     restart: always
-    ports:
-      - "3000:3000"
-    env_file:
-      - .env
 
 volumes:
   redis_data:

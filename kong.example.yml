@@ -1,9 +1,19 @@
 _format_version: "3.0"
+
 services:
-  - name: user-api-gateway
+  - name: web
+    url: http://web:3000
+    routes:
+      - name: nextjs-route
+        paths:
+          - /
+        strip_path: false
+        preserve_host: true
+
+  - name: api
     url: http://user-api:8000
     routes:
-      - name: auth-rate-limiting
+      - name: auth
         paths:
           - /api/v1/auth/login/
           - /api/v1/auth/register/
@@ -22,7 +32,7 @@ services:
               limit_by: ip
               hide_client_headers: false
 
-      - name: user-rate-limiting
+      - name: users
         paths:
           - /api/v1/users/me/password/
           - /api/v1/users/me/email/
@@ -40,7 +50,7 @@ services:
               limit_by: ip
               hide_client_headers: false
 
-      - name: api-v1-rate-limiting
+      - name: general
         paths:
           - /api/v1
         strip_path: false
@@ -58,7 +68,8 @@ services:
       - name: cors
         config:
           origins:
-            - http://localhost:3000
+            - https://dvi-app.xyz
+            - https://www.dvi-app.xyz
           methods:
             - GET
             - POST
