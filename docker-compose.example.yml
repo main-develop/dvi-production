@@ -37,6 +37,25 @@ services:
       redis:
         condition: service_started
 
+  deletion-scheduler:
+    build:
+      context: ./dvi-user-service
+      dockerfile: Dockerfile
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    entrypoint: ["sh", "-c"]
+    command: >
+      '
+        while true; do
+          python manage.py delete_scheduled_users --dry-run --batch-size=100;
+          sleep 1200;
+        done
+      '
+
   kong-gateway:
     image: kong/kong-gateway:latest
     restart: always
