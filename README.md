@@ -1,6 +1,6 @@
 ## About the Project
 
-This project is a production-ready full stack web application built to explore modern development practices and tools.
+This project is a production-ready full-stack web application built to explore modern development practices and tools.
 
 The live application is available at [https://dvi-app.xyz](https://dvi-app.xyz).
 
